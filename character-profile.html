@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Character Profile - Hockey Roleplay Hub</title>
+  
+  <!-- Adobe Typekit Fonts -->
+  <link rel="stylesheet" href="https://use.typekit.net/eat5uwv.css">
+  
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/navigation.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/characters.css">
+  
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container navbar-container">
+        <div class="site-logo">
+          <a href="index.html" class="logo-text">Hockey RP Hub</a>
+        </div>
+        
+        <button class="menu-toggle" id="menuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        
+        <ul class="nav-menu" id="navMenu">
+          <li class="nav-item">
+            <a href="index.html" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="characters.html" class="nav-link active">Characters</a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item">
+                <a href="characters.html?team=all" class="dropdown-link">All Characters</a>
+              </li>
+              <li class="dropdown-item">
+                <a href="characters.html?team=hockey" class="dropdown-link">Hockey Players</a>
+              </li>
+              <li class="dropdown-item">
+                <a href="characters.html?team=other" class="dropdown-link">Other Characters</a>
+              </li>
+              <li class="dropdown-item">
+                <a href="character-create.html" class="dropdown-link">Create Character</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="teams.html" class="nav-link">Teams</a>
+          </li>
+          <li class="nav-item">
+            <a href="scenarios.html" class="nav-link">Scenarios</a>
+          </li>
+          <li class="nav-item">
+            <a href="about.html" class="nav-link">About</a>
+          </li>
+        </ul>
+        
+        <div class="user-nav">
+          <div class="user-nav-item">
+            <a href="login.html" class="btn btn-outline">Sign In</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        <div class="character-profile">
+          <!-- Profile Sidebar -->
+          <div class="profile-sidebar">
+            <img src="images/placeholders/player1.jpg" alt="Alex Morgan" class="profile-main-image">
+            
+            <div class="profile-sidebar-content">
+              <table class="profile-stats-table">
+                <tr>
+                  <th>Height</th>
+                  <td>6'2"</td>
+                </tr>
+                <tr>
+                  <th>Weight</th>
+                  <td>195 lbs</td>
+                </tr>
+                <tr>
+                  <th>Age</th>
+                  <td>27</td>
+                </tr>
+                <tr>
+                  <th>Birthplace</th>
+                  <td>Toronto, ON</td>
+                </tr>
+                <tr>
+                  <th>Shoots</th>
+                  <td>Right</td>
+                </tr>
+                <tr>
+                  <th>Contract</th>
+                  <td>$7.5M x 4 years</td>
+                </tr>
+              </table>
+              
+              <h4>Season Stats</h4>
+              <table class="profile-stats-table">
+                <tr>
+                  <th>Games</th>
+                  <td>78</td>
+                </tr>
+                <tr>
+                  <th>Goals</th>
+                  <td>32</td>
+                </tr>
+                <tr>
+                  <th>Assists</th>
+                  <td>45</td>
+                </tr>
+                <tr>
+                  <th>Points</th>
+                  <td>77</td>
+                </tr>
+                <tr>
+                  <th>+/-</th>
+                  <td>+15</td>
+                </tr>
+                <tr>
+                  <th>PIM</th>
+                  <td>42</td>
+                </tr>
+              </table>
+              
+              <div style="margin-top: var(--spacing-md);">
+                <a href="#" class="btn" style="width: 100%;">Message Player</a>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Profile Main Content -->
+          <div class="profile-main">
+            <div class="profile-header">
+              <div class="profile-title">
+                <div class="profile-number">#87</div>
+                <div class="profile-name-position">
+                  <h1>Alex Morgan</h1>
+                  <div class="character-position">Center | Active</div>
+                </div>
+              </div>
+              
+              <img src="images/logos/team1.png" alt="Wolves" class="profile-team-logo">
+            </div>
+            
+            <div class="profile-tabs">
+              <div class="profile-tab active">Biography</div>
+              <div class="profile-tab">Background</div>
+              <div class="profile-tab">Gallery</div>
+              <div class="profile-tab">Storylines</div>
+            </div>
+            
+            <!-- Biography Tab -->
+            <div class="profile-content" style="display: block;">
+              <h3 class="profile-section-title">Player Biography</h3>
+              <p>Alex Morgan is known for his lightning-fast speed and precision passes, having quickly become a fan favorite since joining the Wolves three seasons ago. His playmaking ability and hockey IQ make him one of the most dangerous centers in the league.</p>
+              
+              <p>Born and raised in Toronto, Morgan played junior hockey with the Toronto Marlboros before being drafted 5th overall by the Wolves. His rookie season exceeded all expectations, and he's been on an upward trajectory ever since.</p>
+              
+              <p>Off the ice, Alex is known for his charitable work with youth hockey programs in underserved communities. He's established the Morgan Foundation which provides equipment and coaching to kids who might not otherwise have the opportunity to play hockey.</p>
+              
+              <div class="character-stats" style="margin-top: var(--spacing-lg);">
+                <div class="stat-item">
+                  <div class="stat-label">Speed</div>
+                  <div class="stat-value">95</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Shooting</div>
+                  <div class="stat-value">89</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Passing</div>
+                  <div class="stat-value">92</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Defense</div>
+                  <div class="stat-value">84</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Checking</div>
+                  <div class="stat-value">78</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Endurance</div>
+                  <div class="stat-value">90</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Background Tab -->
+            <div class="profile-content" style="display: none;">
+              <h3 class="profile-section-title">Personal Background</h3>
+              <p>Alex grew up as the middle child in a hockey-obsessed family. His father, James Morgan, played professionally in Europe, while his mother, Elena, was a figure skating coach. Hockey was in his blood from day one.</p>
+              
+              <p>He attended St. Michael's College School where he excelled both academically and athletically. While focusing primarily on hockey, he also played lacrosse in the off-season to maintain his conditioning and develop different skills.</p>
+              
+              <p>Morgan credits his high school coach, Tom Williams, with developing his hockey IQ and strategic thinking. "Coach Williams taught me to see the game five moves ahead, like chess on ice," he often says in interviews.</p>
+              
+              <p>After high school, Alex had offers from several NCAA Division I programs but chose to play in the OHL to fast-track his development. The decision paid off when he was selected in the first round of the draft.</p>
+              
+              <h3 class="profile-section-title" style="margin-top: var(--spacing-lg);">Personality</h3>
+              <p>Off the ice, Morgan is known for his easy-going personality and dry sense of humor. He's a natural leader who leads by example rather than with loud speeches. Teammates describe him as intensely competitive but also the first to offer encouragement after mistakes.</p>
+              
+              <p>His hobbies include hiking, playing guitar, and strategic board games. He's an avid reader with a particular interest in historical fiction and biographies of sports legends from all disciplines.</p>
+              
+              <p>Alex is single but keeps his dating life private. He shares an apartment with his golden retriever, Stanley (named after the Cup he hopes to win).</p>
+            </div>
+            
+            <!-- Gallery Tab -->
+            <div class="profile-content" style="display: none;">
+              <h3 class="profile-section-title">Photo Gallery</h3>
+              
+              <div class="profile-gallery">
+                <div class="gallery-item">
+                  <img src="images/placeholders/player1-action1.jpg" alt="Alex Morgan in action" class="gallery-image">
+                </div>
+                <div class="gallery-item">
+                  <img src="images/placeholders/player1-action2.jpg" alt="Alex Morgan celebrating a goal" class="gallery-image">
+                </div>
+                <div class="gallery-item">
+                  <img src="images/placeholders/player1-charity.jpg" alt="Alex Morgan at charity event" class="gallery-image">
+                </div>
+                <div class="gallery-item">
+                  <img src="images/placeholders/player1-casual.jpg" alt="Alex Morgan casual" class="gallery-image">
+                </div>
+                <div class="gallery-item">
+                  <img src="images/placeholders/player1-interview.jpg" alt="Alex Morgan interview" class="gallery-image">
+                </div>
+                <div class="gallery-item">
+                  <img src="images/placeholders/player1-training.jpg" alt="Alex Morgan training" class="gallery-image">
+                </div>
+              </div>
+              
+              <div class="modal-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center;">
+                <img src="" alt="Enlarged view" class="modal-image" style="max-width: 90%; max-height: 90%;">
+              </div>
+            </div>
+            
+            <!-- Storylines Tab -->
+            <div class="profile-content" style="display: none;">
+              <h3 class="profile-section-title">Current Storylines</h3>
+              
+              <div class="card" style="margin-bottom: var(--spacing-md);">
+                <div class="card-body">
+                  <h3 class="card-title">Championship Finals</h3>
+                  <p class="card-text">As the Wolves' first-line center, Alex is leading his team against the Eagles in the championship series. With the series tied 2-2, tensions are high, especially between Morgan and Eagles' defenseman Ryan Blake, with whom he has a longstanding rivalry.</p>
+                  <a href="scenario.html?id=1" class="btn btn-outline">View Storyline</a>
+                </div>
+                <div class="card-footer">
+                  <div>8 characters involved</div>
+                  <div>Started 2 days ago</div>
+                </div>
+              </div>
+              
+              <div class="card">
+                <div class="card-body">
+                  <h3 class="card-title">Media Day Controversy</h3>
+                  <p class="card-text">During a recent media day, Alex made comments about league officiating that have sparked controversy. Now he must navigate the fallout while preparing for crucial playoff games.</p>
+                  <a href="scenario.html?id=3" class="btn btn-outline">View Storyline</a>
+                </div>
+                <div class="card-footer">
+                  <div>5 characters involved</div>
+                  <div>Started 1 week ago</div>
+                </div>
+              </div>
+              
+              <h3 class="profile-section-title" style="margin-top: var(--spacing-lg);">Past Storylines</h3>
+              
+              <div class="card">
+                <div class="card-body">
+                  <h3 class="card-title">Injury Recovery</h3>
+                  <p class="card-text">After suffering a knee injury last season, Alex worked through a challenging recovery process, demonstrating his determination and mental toughness.</p>
+                  <a href="scenario.html?id=10" class="btn btn-outline">View Archive</a>
+                </div>
+                <div class="card-footer">
+                  <div>3 characters involved</div>
+                  <div>Concluded 2 months ago</div>
+                </div>
+              </div>
+            </div>
+            
+            <div style="margin-top: var(--spacing-lg); display: flex; justify-content: space-between;">
+              <a href="characters.html" class="btn btn-outline">Back to Characters</a>
+              <a href="character-edit.html?id=1" class="btn">Edit Character</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div>
+            <div class="footer-logo">Hockey RP Hub</div>
+            <p>Create your player, join a team, and hit the ice in this immersive hockey roleplay community.</p>
+          </div>
+          
+          <div>
+            <h4 class="footer-heading">Quick Links</h4>
+            <ul class="footer-links">
+              <li class="footer-link"><a href="index.html">Home</a></li>
+              <li class="footer-link"><a href="characters.html">Characters</a></li>
+              <li class="footer-link"><a href="teams.html">Teams</a></li>
+              <li class="footer-link"><a href="scenarios.html">Scenarios</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 class="footer-heading">Resources</h4>
+            <ul class="footer-links">
+              <li class="footer-link"><a href="rules.html">Community Rules</a></li>
+              <li class="footer-link"><a href="guide.html">Roleplaying Guide</a></li>
+              <li class="footer-link"><a href="faq.html">FAQ</a></li>
+              <li class="footer-link"><a href="contact.html">Contact Us</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 class="footer-heading">Connect</h4>
+            <ul class="footer-links">
+              <li class="footer-link"><a href="#"><i class="fab fa-discord"></i> Discord</a></li>
+              <li class="footer-link"><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+              <li class="footer-link"><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; 2025 Hockey Roleplay Hub. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+  
+  <!-- JavaScript Files -->
+  <script src="js/main.js"></script>
+</body>
+</html>

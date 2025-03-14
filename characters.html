@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Characters - Hockey Roleplay Hub</title>
+  
+  <!-- Adobe Typekit Fonts -->
+  <link rel="stylesheet" href="https://use.typekit.net/eat5uwv.css">
+  
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/navigation.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/characters.css">
+  
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container navbar-container">
+        <div class="site-logo">
+          <a href="index.html" class="logo-text">Hockey RP Hub</a>
+        </div>
+        
+        <button class="menu-toggle" id="menuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        
+        <ul class="nav-menu" id="navMenu">
+          <li class="nav-item">
+            <a href="index.html" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="characters.html" class="nav-link active">Characters</a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item">
+                <a href="characters.html?type=all" class="dropdown-link">All Characters</a>
+              </li>
+              <li class="dropdown-item">
+                <a href="characters.html?type=hockey" class="dropdown-link">Hockey Players</a>
+              </li>
+              <li class="dropdown-item">
+                <a href="characters.html?type=other" class="dropdown-link">Other Characters</a>
+              </li>
+              <li class="dropdown-item">
+                <a href="character-create.html" class="dropdown-link">Create Character</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="teams.html" class="nav-link">Teams</a>
+          </li>
+          <li class="nav-item">
+            <a href="scenarios.html" class="nav-link">Scenarios</a>
+          </li>
+          <li class="nav-item">
+            <a href="about.html" class="nav-link">About</a>
+          </li>
+        </ul>
+        
+        <div class="user-nav">
+          <div class="user-nav-item">
+            <a href="login.html" class="btn btn-outline">Sign In</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Page Header -->
+    <section class="hero" style="background-image: url('images/backgrounds/team-huddle.jpg'); height: 300px;">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">Characters</h1>
+        <div class="hero-subtitle">Browse all characters or create your own</div>
+      </div>
+    </section>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        <!-- Character Search and Filters -->
+        <div class="character-search">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="characterSearch" class="search-input" placeholder="Search characters by name, position, or team...">
+        </div>
+        
+        <div class="character-filters">
+          <form>
+            <div class="filter-grid">
+              <div class="filter-group">
+                <label for="filterTeam" class="filter-label">Team</label>
+                <select id="filterTeam" name="team" class="filter-select">
+                  <option value="all">All Teams</option>
+                  <option value="wolves">Wolves</option>
+                  <option value="eagles">Eagles</option>
+                  <option value="bears">Bears</option>
+                  <option value="falcons">Falcons</option>
+                  <option value="none">No Team</option>
+                </select>
+              </div>
+              
+              <div class="filter-group">
+                <label for="filterPosition" class="filter-label">Position</label>
+                <select id="filterPosition" name="position" class="filter-select">
+                  <option value="all">All Positions</option>
+                  <option value="center">Center</option>
+                  <option value="wing">Wing</option>
+                  <option value="defense">Defense</option>
+                  <option value="goalie">Goalie</option>
+                  <option value="coach">Coach/Staff</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              
+              <div class="filter-group">
+                <label for="filterStatus" class="filter-label">Status</label>
+                <select id="filterStatus" name="status" class="filter-select">
+                  <option value="all">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="injured">Injured</option>
+                  <option value="retired">Retired</option>
+                  <option value="prospect">Prospect</option>
+                </select>
+              </div>
+              
+              <div class="filter-group">
+                <label for="filterType" class="filter-label">Character Type</label>
+                <select id="filterType" name="type" class="filter-select">
+                  <option value="all">All Types</option>
+                  <option value="hockey">Hockey Player</option>
+                  <option value="staff">Team Staff</option>
+                  <option value="family">Family Member</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="filter-actions">
+              <button type="button" class="btn btn-outline filter-reset">Reset</button>
+              <button type="submit" class="btn">Apply Filters</button>
+            </div>
+          </form>
+        </div>
+        
+        <!-- Character Grid -->
+        <div class="grid grid-3">
+          <!-- Character Card 1 -->
+          <div class="character-card" data-team="wolves" data-position="center" data-status="active" data-type="hockey">
+            <div class="character-image-container">
+              <img src="images/placeholders/player1.jpg" alt="Alex Morgan" class="character-image">
+              <div class="character-team-badge">
+                <img src="images/logos/team1.png" alt="Wolves">
+              </div>
+            </div>
+            <div class="character-info">
+              <h3 class="character-name">Alex Morgan</h3>
+              <div class="character-position">Center | #87</div>
+              <div class="character-stats">
+                <div class="stat-item">
+                  <div class="stat-label">Goals</div>
+                  <div class="stat-value">32</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Assists</div>
+                  <div class="stat-value">45</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Games</div>
+                  <div class="stat-value">78</div>
+                </div>
+              </div>
+              <div class="character-bio">
+                Known for his lightning-fast speed and precision passes, Morgan has quickly become a fan favorite.
+              </div>
+              <div class="character-footer">
+                <div class="character-status status-active">Active</div>
+                <a href="character-profile.html?id=1" class="btn btn-outline">View Profile</a>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Character Card 2 -->
+          <div class="character-card" data-team="eagles" data-position="goalie" data-status="injured" data-type="hockey">
+            <div class="character-image-container">
+              <img src="images/placeholders/player2.jpg" alt="Sophia Chen" class="character-image">
+              <div class="character-team-badge">
+                <img src="images/logos/team2.png" alt="Eagles">
+              </div>
+            </div>
+            <div class="character-info">
+              <h3 class="character-name">Sophia Chen</h3>
+              <div class="character-position">Goalie | #31</div>
+              <div class="character-stats">
+                <div class="stat-item">
+                  <div class="stat-label">Saves</div>
+                  <div class="stat-value">924</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">GAA</div>
+                  <div class="stat-value">2.14</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">SO</div>
+                  <div class="stat-value">5</div>
+                </div>
+              </div>
+              <div class="character-bio">
+                With reflexes like a cat, Chen has established herself as one of the league's premier goaltenders.
+              </div>
+              <div class="character-footer">
+                <div class="character-status status-injured">Injured</div>
+                <a href="character-profile.html?id=2" class="btn btn-outline">View Profile</a>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Character Card 3 -->
+          <div class="character-card" data-team="bears" data-position="defense" data-status="active" data-type="hockey">
+            <div class="character-image-container">
+              <img src="images/placeholders/player3.jpg" alt="Marcus Wilson" class="character-image">
+              <div class="character-team-badge">
+                <img src="images/logos/team3.png" alt="Bears">
+              </div>
+            </div>
+            <div class="character-info">
+              <h3 class="character-name">Marcus Wilson</h3>
+              <div class="character-position">Defenseman | #4</div>
+              <div class="character-stats">
+                <div class="stat-item">
+                  <div class="stat-label">Goals</div>
+                  <div class="stat-value">8</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Assists</div>
+                  <div class="stat-value">27</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">+/-</div>
+                  <div class="stat-value">+22</div>
+                </div>
+              </div>
+              <div class="character-bio">
+                A stalwart on the blue line, Wilson is known for his bone-crushing hits and leadership in the locker room.
+              </div>
+              <div class="character-footer">
+                <div class="character-status status-active">Active</div>
+                <a href="character-profile.html?id=3" class="btn btn-outline">View Profile</a>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Character Card 4 -->
+          <div class="character-card" data-team="wolves" data-position="wing" data-status="active" data-type="hockey">
+            <div class="character-image-container">
+              <img src="images/placeholders/player4.jpg" alt="Jamal Williams" class="character-image">
+              <div class="character-team-badge">
+                <img src="images/logos/team1.png" alt="Wolves">
+              </div>
+            </div>
+            <div class="character-info">
+              <h3 class="character-name">Jamal Williams</h3>
+              <div class="character-position">Left Wing | #23</div>
+              <div class="character-stats">
+                <div class="stat-item">
+                  <div class="stat-label">Goals</div>
+                  <div class="stat-value">27</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Assists</div>
+                  <div class="stat-value">18</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Hits</div>
+                  <div class="stat-value">156</div>
+                </div>
+              </div>
+              <div class="character-bio">
+                A power forward with both scoring touch and physical presence, Williams creates space for his linemates.
+              </div>
+              <div class="character-footer">
+                <div class="character-status status-active">Active</div>
+                <a href="character-profile.html?id=4" class="btn btn-outline">View Profile</a>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Character Card 5 -->
+          <div class="character-card" data-team="falcons" data-position="coach" data-status="active" data-type="staff">
+            <div class="character-image-container">
+              <img src="images/placeholders/coach1.jpg" alt="Victor Petrov" class="character-image">
+              <div class="character-team-badge">
+                <img src="images/logos/team4.png" alt="Falcons">
+              </div>
+            </div>
+            <div class="character-info">
+              <h3 class="character-name">Victor Petrov</h3>
+              <div class="character-position">Head Coach</div>
+              <div class="character-stats">
+                <div class="stat-item">
+                  <div class="stat-label">Seasons</div>
+                  <div class="stat-value">7</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Record</div>
+                  <div class="stat-value">284-172</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Cups</div>
+                  <div class="stat-value">1</div>
+                </div>
+              </div>
+              <div class="character-bio">
+                A former defenseman turned coach, Petrov is known for his strategic mind and disciplined system.
+              </div>
+              <div class="character-footer">
+                <div class="character-status">Active</div>
+                <a href="character-profile.html?id=5" class="btn btn-outline">View Profile</a>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Character Card 6 -->
+          <div class="character-card" data-team="none" data-position="other" data-status="active" data-type="family">
+            <div class="character-image-container">
+              <img src="images/placeholders/character1.jpg" alt="Emma Morgan" class="character-image">
+            </div>
+            <div class="character-info">
+              <h3 class="character-name">Emma Morgan</h3>
+              <div class="character-position">Player's Sister</div>
+              <div class="character-bio">
+                Sister to Alex Morgan, Emma is a sports journalist covering hockey for a major network, creating interesting family dynamics when reporting on her brother's team.
+              </div>
+              <div class="character-footer">
+                <a href="character-profile.html?id=6" class="btn btn-outline">View Profile</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="text-center" style="margin: var(--spacing-lg) 0;">
+          <a href="character-create.html" class="btn">Create New Character</a>
+        </div>
+      </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div>
+            <div class="footer-logo">Hockey RP Hub</div>
+            <p>Create your player, join a team, and hit the ice in this immersive hockey roleplay community.</p>
+          </div>
+          
+          <div>
+            <h4 class="footer-heading">Quick Links</h4>
+            <ul class="footer-links">
+              <li class="footer-link"><a href="index.html">Home</a></li>
+              <li class="footer-link"><a href="characters.html">Characters</a></li>
+              <li class="footer-link"><a href="teams.html">Teams</a></li>
+              <li class="footer-link"><a href="scenarios.html">Scenarios</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 class="footer-heading">Resources</h4>
+            <ul class="footer-links">
+              <li class="footer-link"><a href="rules.html">Community Rules</a></li>
+              <li class="footer-link"><a href="guide.html">Roleplaying Guide</a></li>
+              <li class="footer-link"><a href="faq.html">FAQ</a></li>
+              <li class="footer-link"><a href="contact.html">Contact Us</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 class="footer-heading">Connect</h4>
+            <ul class="footer-links">
+              <li class="footer-link"><a href="#"><i class="fab fa-discord"></i> Discord</a></li>
+              <li class="footer-link"><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+              <li class="footer-link"><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; 2025 Hockey Roleplay Hub. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+  
+  <!-- JavaScript Files -->
+  <script src="js/main.js"></script>
+</body>
+</html>
