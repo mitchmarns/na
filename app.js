@@ -36,7 +36,7 @@ app.use(session({
   cookie: { maxAge: 3600000 } // 1 hour
 }));
 
-// Static files
+// Static files - make sure this comes BEFORE route definitions
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
