@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Character = require('../models/characters');
+const Team = require('../models/teams');
 
 /**
  * Home page route
@@ -32,6 +33,27 @@ router.get('/', (req, res) => {
       title: 'Server Error', 
       error: error,
       user: req.session.user || null 
+    });
+  }
+});
+
+router.get('/', async (req, res) => {
+  try {
+    // Fetch teams data
+    const teams = await Team.getAll(); // Assuming you have a Team model with a getAll method
+    
+    // Render index view with teams data
+    res.render('index', { 
+      title: 'Hockey Roleplay Hub',
+      teams: teams,
+      user: req.session.user || null
+    });
+  } catch (error) {
+    console.error('Error loading homepage:', error);
+    res.render('index', { 
+      title: 'Hockey Roleplay Hub',
+      teams: [], // Provide an empty array as fallback
+      user: req.session.user || null
     });
   }
 });
