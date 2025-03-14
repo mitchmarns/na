@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  
+  <!-- Adobe Typekit Fonts -->
+  <link rel="stylesheet" href="https://use.typekit.net/eat5uwv.css">
+  
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/navigation.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/characters.css">
+  <link rel="stylesheet" href="/css/forms.css">
+  
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container navbar-container">
+        <div class="site-logo">
+          <a href="/" class="logo-text">Hockey RP Hub</a>
+        </div>
+        
+        <button class="menu-toggle" id="menuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        
+        <ul class="nav-menu" id="navMenu">
+          <li class="nav-item">
+            <a href="/" class="nav-link <%= (title.includes('Hockey Roleplay Hub') && !title.includes('-')) ? 'active' : '' %>">Home</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="/characters" class="nav-link <%= title.includes('Characters') ? 'active' : '' %>">Characters</a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item">
+                <a href="/characters?type=all" class="dropdown-link">All Characters</a>
+              </li>
+              <li class="dropdown-item">
+                <a href="/characters?type=hockey" class="dropdown-link">Hockey Players</a>
+              </li>
+              <li class="dropdown-item">
+                <a href="/characters?type=other" class="dropdown-link">Other Characters</a>
+              </li>
+              <li class="dropdown-item">
+                <a href="/characters/create" class="dropdown-link">Create Character</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="/teams" class="nav-link <%= title.includes('Teams') ? 'active' : '' %>">Teams</a>
+          </li>
+          <li class="nav-item">
+            <a href="/scenarios" class="nav-link <%= title.includes('Storylines') ? 'active' : '' %>">Scenarios</a>
+          </li>
+          <li class="nav-item">
+            <a href="/about" class="nav-link <%= title.includes('About') ? 'active' : '' %>">About</a>
+          </li>
+        </ul>
+        
+        <div class="user-nav">
+          <% if (user) { %>
+            <div class="user-nav-item dropdown">
+              <a href="/profile" class="nav-link"><%= user.username %></a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-item">
+                  <a href="/profile" class="dropdown-link">My Profile</a>
+                </li>
+                <li class="dropdown-item">
+                  <a href="/characters/create" class="dropdown-link">Create Character</a>
+                </li>
+                <li class="dropdown-item">
+                  <a href="/auth/logout" class="dropdown-link">Sign Out</a>
+                </li>
+              </ul>
+            </div>
+          <% } else { %>
+            <div class="user-nav-item">
+              <a href="/auth/login" class="btn btn-outline">Sign In</a>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <%- body %>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div>
+            <div class="footer-logo">Hockey RP Hub</div>
+            <p>Create your player, join a team, and hit the ice in this immersive hockey roleplay community.</p>
+          </div>
+          
+          <div>
+            <h4 class="footer-heading">Quick Links</h4>
+            <ul class="footer-links">
+              <li class="footer-link"><a href="/">Home</a></li>
+              <li class="footer-link"><a href="/characters">Characters</a></li>
+              <li class="footer-link"><a href="/teams">Teams</a></li>
+              <li class="footer-link"><a href="/scenarios">Scenarios</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 class="footer-heading">Resources</h4>
+            <ul class="footer-links">
+              <li class="footer-link"><a href="/rules">Community Rules</a></li>
+              <li class="footer-link"><a href="/guide">Roleplaying Guide</a></li>
+              <li class="footer-link"><a href="/faq">FAQ</a></li>
+              <li class="footer-link"><a href="/contact">Contact Us</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 class="footer-heading">Connect</h4>
+            <ul class="footer-links">
+              <li class="footer-link"><a href="#"><i class="fab fa-discord"></i> Discord</a></li>
+              <li class="footer-link"><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+              <li class="footer-link"><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; <%= new Date().getFullYear() %> Hockey Roleplay Hub. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+  
+  <!-- JavaScript Files -->
+  <script src="/js/main.js"></script>
+  <% if (typeof scripts !== 'undefined' && scripts.length > 0) { %>
+    <% scripts.forEach(function(script) { %>
+      <script src="<%= script %>"></script>
+    <% }); %>
+  <% } %>
+</body>
+</html>

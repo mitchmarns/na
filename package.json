@@ -1,0 +1,35 @@
+{
+  "name": "hockey-roleplay-hub",
+  "version": "1.0.0",
+  "description": "A hockey roleplay community website",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hockey",
+    "roleplay",
+    "community",
+    "nodejs",
+    "sqlite"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "express-validator": "^7.0.1",
+    "multer": "^1.4.5-lts.1",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

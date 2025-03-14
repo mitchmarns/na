@@ -1,0 +1,203 @@
+<!-- Page Header -->
+<section class="hero" style="background-image: url('/images/backgrounds/team-huddle.jpg'); height: 300px;">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1 class="hero-title">Characters</h1>
+    <div class="hero-subtitle">Browse all characters or create your own</div>
+  </div>
+</section>
+
+<div class="container">
+  <!-- Character Search and Filters -->
+  <div class="character-search">
+    <i class="fas fa-search search-icon"></i>
+    <input type="text" id="characterSearch" class="search-input" placeholder="Search characters by name, position, or team...">
+  </div>
+  
+  <div class="character-filters">
+    <form action="/characters" method="GET">
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label for="filterTeam" class="filter-label">Team</label>
+          <select id="filterTeam" name="team" class="filter-select">
+            <option value="all" <%= filters.team === 'all' ? 'selected' : '' %>>All Teams</option>
+            <% teams.forEach(function(team) { %>
+              <option value="<%= team.team_code %>" <%= filters.team === team.team_code ? 'selected' : '' %>><%= team.team_name %></option>
+            <% }); %>
+            <option value="none" <%= filters.team === 'none' ? 'selected' : '' %>>No Team</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="filterPosition" class="filter-label">Position</label>
+          <select id="filterPosition" name="position" class="filter-select">
+            <option value="all" <%= filters.position === 'all' ? 'selected' : '' %>>All Positions</option>
+            <option value="center" <%= filters.position === 'center' ? 'selected' : '' %>>Center</option>
+            <option value="leftwing" <%= filters.position === 'leftwing' ? 'selected' : '' %>>Left Wing</option>
+            <option value="rightwing" <%= filters.position === 'rightwing' ? 'selected' : '' %>>Right Wing</option>
+            <option value="defense" <%= filters.position === 'defense' ? 'selected' : '' %>>Defense</option>
+            <option value="goalie" <%= filters.position === 'goalie' ? 'selected' : '' %>>Goalie</option>
+            <option value="coach" <%= filters.position === 'coach' ? 'selected' : '' %>>Coach/Staff</option>
+            <option value="other" <%= filters.position === 'other' ? 'selected' : '' %>>Other</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="filterStatus" class="filter-label">Status</label>
+          <select id="filterStatus" name="status" class="filter-select">
+            <option value="all" <%= filters.status === 'all' ? 'selected' : '' %>>All Status</option>
+            <option value="active" <%= filters.status === 'active' ? 'selected' : '' %>>Active</option>
+            <option value="injured" <%= filters.status === 'injured' ? 'selected' : '' %>>Injured</option>
+            <option value="retired" <%= filters.status === 'retired' ? 'selected' : '' %>>Retired</option>
+            <option value="prospect" <%= filters.status === 'prospect' ? 'selected' : '' %>>Prospect</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="filterType" class="filter-label">Character Type</label>
+          <select id="filterType" name="type" class="filter-select">
+            <option value="all" <%= filters.type === 'all' ? 'selected' : '' %>>All Types</option>
+            <option value="hockey" <%= filters.type === 'hockey' ? 'selected' : '' %>>Hockey Player</option>
+            <option value="staff" <%= filters.type === 'staff' ? 'selected' : '' %>>Team Staff</option>
+            <option value="family" <%= filters.type === 'family' ? 'selected' : '' %>>Family Member</option>
+            <option value="other" <%= filters.type === 'other' ? 'selected' : '' %>>Other</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="filter-actions">
+        <a href="/characters" class="btn btn-outline filter-reset">Reset</a>
+        <button type="submit" class="btn">Apply Filters</button>
+      </div>
+    </form>
+  </div>
+  
+  <!-- Character Grid -->
+  <div class="grid grid-3">
+    <% if (characters && characters.length > 0) { %>
+      <% characters.forEach(function(character) { %>
+        <!-- Character Card -->
+        <div class="character-card" 
+             data-team="<%= character.character_team || 'none' %>" 
+             data-position="<%= character.character_position || 'other' %>" 
+             data-status="<%= character.character_status || 'active' %>" 
+             data-type="<%= character.character_type || 'other' %>">
+          <div class="character-image-container">
+            <img src="<%= character.profile_image_url || '/images/placeholders/player1.jpg' %>" alt="<%= character.character_name %>" class="character-image">
+            <% if (character.character_team && character.team_logo_url) { %>
+              <div class="character-team-badge">
+                <img src="<%= character.team_logo_url %>" alt="<%= character.team_name %>">
+              </div>
+            <% } %>
+          </div>
+          <div class="character-info">
+            <h3 class="character-name"><%= character.character_name %></h3>
+            <div class="character-position">
+              <%= character.character_position || 'No Position' %>
+              <% if (character.character_number) { %> | #<%= character.character_number %><% } %>
+            </div>
+            <div class="character-stats">
+              <% if (character.character_position === 'goalie') { %>
+                <div class="stat-item">
+                  <div class="stat-label">Saves</div>
+                  <div class="stat-value"><%= character.stat_saves || '0' %></div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">GAA</div>
+                  <div class="stat-value"><%= character.stat_gaa || '0.00' %></div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">SO</div>
+                  <div class="stat-value"><%= character.stat_shutouts || '0' %></div>
+                </div>
+              <% } else if (character.character_type === 'hockey') { %>
+                <div class="stat-item">
+                  <div class="stat-label">Goals</div>
+                  <div class="stat-value"><%= character.stat_goals || '0' %></div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Assists</div>
+                  <div class="stat-value"><%= character.stat_assists || '0' %></div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Speed</div>
+                  <div class="stat-value"><%= character.stat_speed || '75' %></div>
+                </div>
+              <% } else { %>
+                <div class="stat-item">
+                  <div class="stat-label">&nbsp;</div>
+                  <div class="stat-value">&nbsp;</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">&nbsp;</div>
+                  <div class="stat-value">&nbsp;</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">&nbsp;</div>
+                  <div class="stat-value">&nbsp;</div>
+                </div>
+              <% } %>
+            </div>
+            <div class="character-bio">
+              <%= character.character_bio || 'No bio available.' %>
+            </div>
+            <div class="character-footer">
+              <% if (character.character_status) { %>
+                <div class="character-status status-<%= character.character_status %>"><%= character.character_status %></div>
+              <% } else { %>
+                <div>&nbsp;</div>
+              <% } %>
+              <a href="/characters/<%= character.id %>" class="btn btn-outline">View Profile</a>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <div class="text-center" style="grid-column: span 3;">
+        <p>No characters found matching your criteria.</p>
+      </div>
+    <% } %>
+  </div>
+  
+  <div class="text-center" style="margin: var(--spacing-lg) 0;">
+    <a href="/characters/create" class="btn">Create New Character</a>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Character search functionality
+    const characterSearch = document.getElementById('characterSearch');
+    const characterCards = document.querySelectorAll('.character-card');
+    
+    if (characterSearch && characterCards.length > 0) {
+      characterSearch.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        
+        characterCards.forEach(card => {
+          const characterName = card.querySelector('.character-name').textContent.toLowerCase();
+          const characterPosition = card.querySelector('.character-position').textContent.toLowerCase();
+          const characterBio = card.querySelector('.character-bio')?.textContent.toLowerCase() || '';
+          
+          // Check if any of the character info contains the search term
+          if (characterName.includes(searchTerm) || 
+              characterPosition.includes(searchTerm) || 
+              characterBio.includes(searchTerm)) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    }
+    
+    // Reset button functionality
+    const resetButton = document.querySelector('.filter-reset');
+    if (resetButton) {
+      resetButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = '/characters';
+      });
+    }
+  });
+</script>
