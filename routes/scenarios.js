@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getDb } = require('../db/database');
-const Character = require('../models/character');
+const Character = require('../models/characters');
 
 // Middleware to check if user is logged in
 const isAuthenticated = (req, res, next) => {

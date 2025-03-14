@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Character = require('../models/character');
+const Character = require('../models/characters');
 const { getDb } = require('../db/database');
 
 // GET / - Home page
