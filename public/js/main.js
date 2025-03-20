@@ -1,210 +1,209 @@
-// main.js - Core JavaScript functionality for Hockey Roleplay Hub
-
+// main.js - Frontend JavaScript for hockey roleplay dashboard
 document.addEventListener('DOMContentLoaded', function() {
-  // Mobile menu toggle
-  const menuToggle = document.getElementById('menuToggle');
-  const navMenu = document.getElementById('navMenu');
-  
-  if (menuToggle && navMenu) {
-    menuToggle.addEventListener('click', function() {
-      navMenu.classList.toggle('active');
-    });
-  }
-  
-  // Close mobile menu when clicking outside
-  document.addEventListener('click', function(event) {
-    if (navMenu && navMenu.classList.contains('active') && !navMenu.contains(event.target) && event.target !== menuToggle) {
-      navMenu.classList.remove('active');
-    }
-  });
-  
-  // Handle dropdowns on mobile
-  const dropdowns = document.querySelectorAll('.dropdown');
-  
-  dropdowns.forEach(dropdown => {
-    const link = dropdown.querySelector('.nav-link');
-    
-    // For mobile: toggle dropdown on click
-    if (link) {
-      link.addEventListener('click', function(e) {
-        // Only prevent default on mobile
-        if (window.innerWidth <= 768) {
-          e.preventDefault();
-          dropdown.classList.toggle('active');
-          
-          // Close other dropdowns
-          dropdowns.forEach(otherDropdown => {
-            if (otherDropdown !== dropdown && otherDropdown.classList.contains('active')) {
-              otherDropdown.classList.remove('active');
-            }
-          });
-        }
-      });
-    }
-  });
-  
-  // Profile tabs functionality
-  const profileTabs = document.querySelectorAll('.profile-tab');
-  const profileContents = document.querySelectorAll('.profile-content');
-  
-  if (profileTabs.length > 0 && profileContents.length > 0) {
-    profileTabs.forEach((tab, index) => {
-      tab.addEventListener('click', () => {
-        // Remove active class from all tabs and contents
-        profileTabs.forEach(t => t.classList.remove('active'));
-        profileContents.forEach(c => c.style.display = 'none');
-        
-        // Add active class to current tab and show corresponding content
-        tab.classList.add('active');
-        if (profileContents[index]) {
-          profileContents[index].style.display = 'block';
-        }
-      });
-    });
-    
-    // Show first tab by default
-    if (profileTabs[0] && profileContents[0]) {
-      profileTabs[0].classList.add('active');
-      profileContents[0].style.display = 'block';
-    }
-  }
-  
-  // Character search functionality
-  const characterSearch = document.getElementById('characterSearch');
-  const characterCards = document.querySelectorAll('.character-card');
-  
-  if (characterSearch && characterCards.length > 0) {
-    characterSearch.addEventListener('input', function() {
-      const searchTerm = this.value.toLowerCase().trim();
-      
-      characterCards.forEach(card => {
-        const characterName = card.querySelector('.character-name').textContent.toLowerCase();
-        const characterPosition = card.querySelector('.character-position').textContent.toLowerCase();
-        const characterBio = card.querySelector('.character-bio')?.textContent.toLowerCase() || '';
-        
-        // Check if any of the character info contains the search term
-        if (characterName.includes(searchTerm) || 
-            characterPosition.includes(searchTerm) || 
-            characterBio.includes(searchTerm)) {
-          card.style.display = '';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    });
-  }
-  
-  // Filter functionality
-  const filterForms = document.querySelectorAll('.character-filters form');
-  
-  filterForms.forEach(form => {
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const formData = new FormData(form);
-      const filters = {};
-      
-      // Build filter object
-      for (const [key, value] of formData.entries()) {
-        if (value) {
-          filters[key] = value;
-        }
-      }
-      
-      // Apply filters to character cards
-      characterCards.forEach(card => {
-        let showCard = true;
-        
-        // Check each filter against card data attributes
-        for (const [key, value] of Object.entries(filters)) {
-          if (card.dataset[key] !== value && value !== 'all') {
-            showCard = false;
-            break;
-          }
-        }
-        
-        card.style.display = showCard ? '' : 'none';
-      });
-    });
-    
-    // Reset button functionality
-    const resetButton = form.querySelector('.filter-reset');
-    if (resetButton) {
-      resetButton.addEventListener('click', function() {
-        form.reset();
-        
-        // Show all cards
-        characterCards.forEach(card => {
-          card.style.display = '';
-        });
-      });
-    }
-  });
-  
-  // Gallery image modal
-  const galleryItems = document.querySelectorAll('.gallery-item');
-  const modalContainer = document.querySelector('.modal-container');
-  
-  if (galleryItems.length > 0 && modalContainer) {
-    galleryItems.forEach(item => {
-      item.addEventListener('click', function() {
-        const imgSrc = this.querySelector('img').src;
-        const modalImg = modalContainer.querySelector('.modal-image');
-        
-        if (modalImg) {
-          modalImg.src = imgSrc;
-          modalContainer.style.display = 'flex';
-        }
-      });
-    });
-    
-    // Close modal when clicking outside image
-    if (modalContainer) {
-      modalContainer.addEventListener('click', function(e) {
-        if (e.target === modalContainer) {
-          modalContainer.style.display = 'none';
-        }
-      });
-    }
-  }
+  // Load all data for the dashboard
+  loadMyCharacters();
+  loadUpcomingGames();
+  loadMyTeam();
+  loadUnreadMessages();
+  loadRecentActivity();
 });
 
-// Helper Functions
-
-// Format date for display (e.g., "Mar 15, 2025")
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+// Function to load and display user's characters
+function loadMyCharacters() {
+  fetch('/api/my-characters')
+      .then(response => {
+          if (!response.ok) {
+              throw new Error(`Failed to fetch characters data: ${response.status}`);
+          }
+          return response.json();
+      })
+      .then(characters => {
+          const characterCard = document.querySelector('.card:nth-child(1)');
+          if (characterCard) {
+              const paragraphs = characterCard.querySelectorAll('p');
+              
+              if (paragraphs.length >= 2) {
+                  // Update character count
+                  paragraphs[0].innerHTML = `You have <span class="accent-text">${characters.length}</span> active characters`;
+                  
+                  // Update latest character info
+                  if (characters.length > 0) {
+                      const latestChar = characters[0];
+                      const positionInitial = latestChar.position.charAt(0);
+                      paragraphs[1].innerHTML = `Latest character: <span class="accent-text">${latestChar.name} (${positionInitial})</span>`;
+                  } else {
+                      paragraphs[1].textContent = 'No characters created yet';
+                  }
+              }
+          }
+      })
+      .catch(error => {
+          console.error('Error loading characters:', error);
+          displayError('characters', 'Failed to load character data. Please try again later.');
+      });
 }
 
-// Get URL parameters (for dynamic pages)
-function getURLParameter(name) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(name);
+// Function to load and display upcoming games
+function loadUpcomingGames() {
+  fetch('/api/upcoming-games?limit=1')
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Failed to fetch upcoming games data');
+          }
+          return response.json();
+      })
+      .then(games => {
+          const gamesCard = document.querySelector('.card:nth-child(2)');
+          if (gamesCard) {
+              const paragraphs = gamesCard.querySelectorAll('p');
+              
+              if (paragraphs.length >= 2) {
+                  if (games.length > 0) {
+                      const nextGame = games[0];
+                      const gameDate = new Date(nextGame.date);
+                      
+                      // Format the date
+                      const options = { weekday: 'long', hour: 'numeric', minute: 'numeric' };
+                      const formattedDate = gameDate.toLocaleDateString('en-US', options);
+                      
+                      paragraphs[0].innerHTML = `<span class="accent-text">${nextGame.home_team_name}</span> vs <span class="accent-text">${nextGame.away_team_name}</span>`;
+                      paragraphs[1].textContent = formattedDate;
+                  } else {
+                      paragraphs[0].textContent = 'No upcoming games';
+                      paragraphs[1].textContent = 'Check back later';
+                  }
+              }
+          }
+      })
+      .catch(error => {
+          console.error('Error loading upcoming games:', error);
+          displayError('games');
+      });
 }
 
-// Load character data (example of data loading, would connect to backend in production)
-function loadCharacterData(characterId) {
-  // In a real application, this would be an API call
-  // For now, we'll simulate with local data
-  return {
-    id: characterId,
-    name: "Example Character",
-    position: "Center",
-    number: 87,
-    team: "Wolves",
-    stats: {
-      goals: 32,
-      assists: 45,
-      games: 78
-    },
-    bio: "This is an example character bio."
-  };
+// Function to load and display user's team
+function loadMyTeam() {
+  fetch('/api/my-team')
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Failed to fetch team data');
+          }
+          return response.json();
+      })
+      .then(team => {
+          const teamCard = document.querySelector('.card:nth-child(3)');
+          if (teamCard) {
+              const paragraphs = teamCard.querySelectorAll('p');
+              
+              if (paragraphs.length >= 2) {
+                  if (team) {
+                      paragraphs[0].innerHTML = `<span class="accent-text">${team.name}</span>`;
+                      paragraphs[1].innerHTML = `Record: <span class="accent-text">${team.record}</span>`;
+                  } else {
+                      paragraphs[0].textContent = 'No team assigned';
+                      paragraphs[1].textContent = 'Join a team to see stats';
+                  }
+              }
+          }
+      })
+      .catch(error => {
+          console.error('Error loading team data:', error);
+          displayError('team');
+      });
 }
 
-// Load character list
-function loadCharacters() {
-  // In a real application, this would be an API call
-  // For demonstration, we're not implementing actual data loading
-  console.log("Characters would be loaded here from a database");
+// Function to load and display unread messages count
+function loadUnreadMessages() {
+  fetch('/api/unread-messages')
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Failed to fetch messages data');
+          }
+          return response.json();
+      })
+      .then(data => {
+          const messagesCard = document.querySelector('.card:nth-child(4)');
+          if (messagesCard) {
+              const paragraph = messagesCard.querySelector('p');
+              
+              if (paragraph) {
+                  paragraph.innerHTML = `You have <span class="accent-text">${data.count}</span> unread messages`;
+              }
+          }
+      })
+      .catch(error => {
+          console.error('Error loading messages:', error);
+          displayError('messages');
+      });
 }
+
+// Function to load recent activity (simplified for demo)
+function loadRecentActivity() {
+  // For this example, we'll just update with static data
+  // In a real app, you would fetch this from an API endpoint
+  
+  const activityList = document.querySelector('.sidebar h3:nth-of-type(3) + ul');
+  if (activityList) {
+      // Clear previous content
+      activityList.innerHTML = '';
+      
+      // Add activity items
+      const activities = [
+          { text: 'Toronto vs Vancouver (4-2)', link: '#game-4' },
+          { text: 'Mark Stevens scored 2 goals', link: '#player-stats-1' },
+          { text: 'Team practice scheduled', link: '#events' }
+      ];
+      
+      activities.forEach(activity => {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = activity.link;
+          a.textContent = activity.text;
+          li.appendChild(a);
+          activityList.appendChild(li);
+      });
+  }
+}
+
+// Function to display error messages
+function displayError(section, message = 'Please try again later') {
+  let card;
+  
+  switch(section) {
+      case 'characters':
+          card = document.querySelector('.card:nth-child(1)');
+          break;
+      case 'games':
+          card = document.querySelector('.card:nth-child(2)');
+          break;
+      case 'team':
+          card = document.querySelector('.card:nth-child(3)');
+          break;
+      case 'messages':
+          card = document.querySelector('.card:nth-child(4)');
+          break;
+      default:
+          return;
+  }
+  
+  if (card) {
+      const paragraphs = card.querySelectorAll('p');
+      if (paragraphs.length > 0) {
+          paragraphs[0].innerHTML = `<span class="accent-text">Error loading data</span>`;
+          if (paragraphs.length > 1) {
+              paragraphs[1].textContent = message;
+          }
+      }
+  }
+}
+
+// Add event listener for the "New Character" button
+document.addEventListener('DOMContentLoaded', function() {
+  const newCharBtn = document.querySelector('.btn-primary');
+  if (newCharBtn) {
+      newCharBtn.addEventListener('click', function() {
+          alert('Character creation form will be implemented soon!');
+          // In a real app, you would show a modal or navigate to a character creation page
+      });
+  }
+});

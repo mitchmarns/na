@@ -1,0 +1,11 @@
+/*
+ * grid.css
+ * Grid system for Northern Attitude Hockey Roleplay
+ */
+
+/* Basic grid container */
+.grid {
+  display: grid;
+  gap: var(--space-5);
+}
+

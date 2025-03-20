@@ -1,73 +1,91 @@
+// app.js
 const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
 const cors = require('cors');
-const { initializeDatabase } = require('./db/database');
+const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
+const helmet = require('helmet');
+const path = require('path');
+require('dotenv').config();
 
-// Initialize database
-initializeDatabase();
+// Import database connection
+const db = require('./config/db');
 
 // Import routes
-const indexRoutes = require('./routes/index');
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/users');
 const characterRoutes = require('./routes/characters');
 const teamRoutes = require('./routes/teams');
-const scenarioRoutes = require('./routes/scenarios');
-const authRoutes = require('./routes/auth');
-const apiRoutes = require('./routes/api');
+const messageRoutes = require('./routes/messages');
+const socialRoutes = require('./routes/social');
+const gameRoutes = require('./routes/games');
+const threadRoutes = require('./routes/threads');
+
+// Import middleware
+const errorHandler = require('./middleware/error');
 
 // Create Express app
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Set up view engine
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
 
 // Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(session({
-  secret: 'hockey-roleplay-hub-secret',
-  resave: false,
-  saveUninitialized: false,
-  cookie: { maxAge: 3600000 } // 1 hour
+app.use(morgan('dev')); // Logging
+app.use(helmet({ contentSecurityPolicy: false })); // Security headers
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || '*',
+  credentials: true
 }));
+app.use(express.json()); // Parse JSON request bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+app.use(cookieParser()); // Parse cookies
 
-// Static files - make sure this comes BEFORE route definitions
+// Serve static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
-app.use('/', indexRoutes);
-app.use('/characters', characterRoutes);
-app.use('/teams', teamRoutes);
-app.use('/scenarios', scenarioRoutes);
-app.use('/auth', authRoutes);
-app.use('/api', apiRoutes);
+// Set up API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api', characterRoutes); // Includes /api/my-characters and /api/characters
+app.use('/api/teams', teamRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/social', socialRoutes);
+app.use('/api/games', gameRoutes);
+app.use('/api/threads', threadRoutes);
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).render('404', { 
-    title: '404 - Page Not Found', 
-    user: req.session.user || null 
-  });
+// Add placeholder API endpoint for testing
+app.get('/api/placeholder/:width/:height', (req, res) => {
+  const { width, height } = req.params;
+  res.redirect(`https://via.placeholder.com/${width}x${height}`);
 });
 
-// Error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).render('error', { 
-    title: 'Server Error', 
-    error: process.env.NODE_ENV === 'development' ? err : {}, 
-    user: req.session.user || null 
-  });
+// Health check endpoint
+app.get('/api/health', async (req, res) => {
+  try {
+    const dbConnected = await db.testConnection();
+    res.json({
+      status: 'ok',
+      timestamp: new Date(),
+      dbConnection: dbConnected ? 'connected' : 'disconnected',
+      environment: process.env.NODE_ENV || 'development'
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    });
+  }
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Handle 404 errors for API routes
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ message: 'API endpoint not found' });
 });
+
+// For any other routes, serve the index.html file
+// This allows client-side routing to work
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Error handling middleware (must be last)
+app.use(errorHandler);
 
 module.exports = app;

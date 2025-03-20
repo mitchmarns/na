@@ -1,0 +1,315 @@
+-- Database schema for Northern Attitude Hockey Roleplay
+
+-- Create Users table
+CREATE TABLE IF NOT EXISTS Users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    role ENUM('user', 'admin') DEFAULT 'user',
+    avatar_url TEXT,
+    display_name VARCHAR(100),
+    bio TEXT,
+    location VARCHAR(100),
+    experience_level ENUM('beginner', 'intermediate', 'advanced') DEFAULT 'beginner',
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMP NULL
+);
+
+-- Create PasswordResets table
+CREATE TABLE IF NOT EXISTS PasswordResets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    expires_at TIMESTAMP NOT NULL,
+    used BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+);
+
+-- Create Characters table
+CREATE TABLE IF NOT EXISTS Characters (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    character_type ENUM('player', 'coach', 'staff', 'executive', 'fan', 'media') DEFAULT 'player',
+    position VARCHAR(10),
+    role VARCHAR(100),
+    team_id INT NULL,
+    avatar_url TEXT,
+    header_image_url TEXT,
+    bio TEXT,
+    stats_json TEXT,
+    age INT,
+    nationality VARCHAR(100),
+    hometown VARCHAR(100),
+    height VARCHAR(20),
+    weight INT,
+    handedness VARCHAR(10),
+    years_pro INT,
+    is_active BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+);
+
+-- Create Teams table
+CREATE TABLE IF NOT EXISTS Teams (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT,
+    logo_url TEXT,
+    primary_color VARCHAR(20) DEFAULT '#000000',
+    secondary_color VARCHAR(20) DEFAULT '#FFFFFF',
+    owner_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (owner_id) REFERENCES Users(id) ON DELETE CASCADE
+);
+
+-- Create TeamMembers table
+CREATE TABLE IF NOT EXISTS TeamMembers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    team_id INT NOT NULL,
+    character_id INT NOT NULL,
+    role ENUM('player', 'coach', 'staff', 'manager') DEFAULT 'player',
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (team_id) REFERENCES Teams(id) ON DELETE CASCADE,
+    FOREIGN KEY (character_id) REFERENCES Characters(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_team_character (team_id, character_id)
+);
+
+-- Create TeamStaff table
+CREATE TABLE IF NOT EXISTS TeamStaff (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    team_id INT NOT NULL,
+    user_id INT NOT NULL,
+    role VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (team_id) REFERENCES Teams(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+);
+
+-- Create JoinRequests table
+CREATE TABLE IF NOT EXISTS JoinRequests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    team_id INT NOT NULL,
+    character_id INT NOT NULL,
+    message TEXT,
+    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (team_id) REFERENCES Teams(id) ON DELETE CASCADE,
+    FOREIGN KEY (character_id) REFERENCES Characters(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_request (team_id, character_id)
+);
+
+-- Create Conversations table
+CREATE TABLE IF NOT EXISTS Conversations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    is_group BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_message_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create ConversationParticipants table
+CREATE TABLE IF NOT EXISTS ConversationParticipants (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    conversation_id INT NOT NULL,
+    character_id INT NOT NULL,
+    custom_name VARCHAR(100),
+    custom_image TEXT,
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (conversation_id) REFERENCES Conversations(id) ON DELETE CASCADE,
+    FOREIGN KEY (character_id) REFERENCES Characters(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_conversation_character (conversation_id, character_id)
+);
+
+-- Create Messages table
+CREATE TABLE IF NOT EXISTS Messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    conversation_id INT NOT NULL,
+    sender_character_id INT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (conversation_id) REFERENCES Conversations(id) ON DELETE CASCADE,
+    FOREIGN KEY (sender_character_id) REFERENCES Characters(id) ON DELETE CASCADE
+);
+
+-- Create MessageReadStatus table
+CREATE TABLE IF NOT EXISTS MessageReadStatus (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    message_id INT NOT NULL,
+    character_id INT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    read_at TIMESTAMP NULL,
+    FOREIGN KEY (message_id) REFERENCES Messages(id) ON DELETE CASCADE,
+    FOREIGN KEY (character_id) REFERENCES Characters(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_message_character (message_id, character_id)
+);
+
+-- Create SocialPosts table
+CREATE TABLE IF NOT EXISTS SocialPosts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    character_id INT NOT NULL,
+    content TEXT NOT NULL,
+    visibility ENUM('public', 'followers', 'team') DEFAULT 'public',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (character_id) REFERENCES Characters(id) ON DELETE CASCADE
+);
+
+-- Create SocialPostImages table
+CREATE TABLE IF NOT EXISTS SocialPostImages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    post_id INT NOT NULL,
+    image_url TEXT NOT NULL,
+    display_order INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES SocialPosts(id) ON DELETE CASCADE
+);
+
+-- Create SocialComments table
+CREATE TABLE IF NOT EXISTS SocialComments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    post_id INT NOT NULL,
+    character_id INT NOT NULL,
+    content TEXT NOT NULL,
+    parent_comment_id INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES SocialPosts(id) ON DELETE CASCADE,
+    FOREIGN KEY (character_id) REFERENCES Characters(id) ON DELETE CASCADE,
+    FOREIGN KEY (parent_comment_id) REFERENCES SocialComments(id) ON DELETE SET NULL
+);
+
+-- Create SocialLikes table
+CREATE TABLE IF NOT EXISTS SocialLikes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    post_id INT NOT NULL,
+    character_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES SocialPosts(id) ON DELETE CASCADE,
+    FOREIGN KEY (character_id) REFERENCES Characters(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_like (post_id, character_id)
+);
+
+-- Create Follows table
+CREATE TABLE IF NOT EXISTS Follows (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    follower_id INT NOT NULL,
+    followed_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (follower_id) REFERENCES Characters(id) ON DELETE CASCADE,
+    FOREIGN KEY (followed_id) REFERENCES Characters(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_follow (follower_id, followed_id)
+);
+
+-- Create Hashtags table
+CREATE TABLE IF NOT EXISTS Hashtags (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create PostHashtags table
+CREATE TABLE IF NOT EXISTS PostHashtags (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    post_id INT NOT NULL,
+    hashtag_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES SocialPosts(id) ON DELETE CASCADE,
+    FOREIGN KEY (hashtag_id) REFERENCES Hashtags(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_post_hashtag (post_id, hashtag_id)
+);
+
+-- Create Notifications table
+CREATE TABLE IF NOT EXISTS Notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    character_id INT NOT NULL,
+    actor_id INT NOT NULL,
+    action_type ENUM('like', 'comment', 'follow', 'tag', 'mention', 'team', 'message') NOT NULL,
+    reference_id INT NULL,
+    reference_type VARCHAR(50) NULL,
+    content TEXT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (character_id) REFERENCES Characters(id) ON DELETE CASCADE,
+    FOREIGN KEY (actor_id) REFERENCES Characters(id) ON DELETE CASCADE
+);
+
+-- Create Games table
+CREATE TABLE IF NOT EXISTS Games (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    home_team_id INT NOT NULL,
+    away_team_id INT NOT NULL,
+    date TIMESTAMP NOT NULL,
+    location VARCHAR(255),
+    status ENUM('scheduled', 'live', 'completed', 'cancelled') DEFAULT 'scheduled',
+    home_score INT DEFAULT 0,
+    away_score INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (home_team_id) REFERENCES Teams(id) ON DELETE CASCADE,
+    FOREIGN KEY (away_team_id) REFERENCES Teams(id) ON DELETE CASCADE
+);
+
+-- Create GameParticipants table
+CREATE TABLE IF NOT EXISTS GameParticipants (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    game_id INT NOT NULL,
+    character_id INT NOT NULL,
+    team_id INT NOT NULL,
+    stats_json TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (game_id) REFERENCES Games(id) ON DELETE CASCADE,
+    FOREIGN KEY (character_id) REFERENCES Characters(id) ON DELETE CASCADE,
+    FOREIGN KEY (team_id) REFERENCES Teams(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_game_character (game_id, character_id)
+);
+
+-- Create Threads table (for roleplay threads)
+CREATE TABLE IF NOT EXISTS Threads (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    creator_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    location VARCHAR(255),
+    status ENUM('open', 'closed') DEFAULT 'open',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (creator_id) REFERENCES Characters(id) ON DELETE CASCADE
+);
+
+-- Create ThreadPosts table (roleplay thread posts)
+CREATE TABLE IF NOT EXISTS ThreadPosts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    thread_id INT NOT NULL,
+    character_id INT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (thread_id) REFERENCES Threads(id) ON DELETE CASCADE,
+    FOREIGN KEY (character_id) REFERENCES Characters(id) ON DELETE CASCADE
+);
+
+-- Create CharacterContacts table
+CREATE TABLE IF NOT EXISTS CharacterContacts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    character_id INT NOT NULL,
+    target_character_id INT NOT NULL,
+    custom_name VARCHAR(100),
+    custom_image TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (character_id) REFERENCES Characters(id) ON DELETE CASCADE,
+    FOREIGN KEY (target_character_id) REFERENCES Characters(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_character_contact (character_id, target_character_id)
+);
+
+-- Create UserSettings table
+CREATE TABLE IF NOT EXISTS UserSettings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    privacy_settings JSON,
+    notification_preferences JSON,
+    theme_preferences JSON,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_user_settings (user_id)
+);

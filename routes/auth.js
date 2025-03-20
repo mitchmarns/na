@@ -1,194 +1,124 @@
+// routes/auth.js
 const express = require('express');
+const { body } = require('express-validator');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const { body, validationResult } = require('express-validator');
-const { getDb } = require('../db/database');
+const authController = require('../controllers/auth');
+const { authenticate } = require('../middleware/auth');
+const { validateRequest } = require('../middleware/validator');
 
-// GET /auth/register - Show registration form
-router.get('/register', (req, res) => {
-  if (req.session.user) {
-    return res.redirect('/');
-  }
-  
-  res.render('auth/register', {
-    title: 'Register - Hockey Roleplay Hub',
-    errors: [],
-    user: null
-  });
-});
-
-// POST /auth/register - Process registration
+/**
+ * @route POST /api/auth/register
+ * @desc Register a new user
+ * @access Public
+ */
 router.post('/register', [
-  // Validate input
+  // Validation
   body('username')
     .trim()
-    .isLength({ min: 3, max: 30 })
-    .withMessage('Username must be between 3 and 30 characters')
+    .isLength({ min: 3, max: 50 })
+    .withMessage('Username must be between 3 and 50 characters')
     .matches(/^[a-zA-Z0-9_]+$/)
-    .withMessage('Username can only contain letters, numbers, and underscores')
-    .custom(async (value) => {
-      const db = getDb();
-      const existingUser = db.prepare('SELECT id FROM users WHERE username = ?').get(value);
-      if (existingUser) {
-        throw new Error('Username already in use');
-      }
-      return true;
-    }),
+    .withMessage('Username can only contain letters, numbers, and underscores'),
+  
   body('email')
     .trim()
     .isEmail()
-    .withMessage('Please enter a valid email address')
-    .normalizeEmail()
-    .custom(async (value) => {
-      const db = getDb();
-      const existingUser = db.prepare('SELECT id FROM users WHERE email = ?').get(value);
-      if (existingUser) {
-        throw new Error('Email already in use');
-      }
-      return true;
-    }),
+    .withMessage('Please provide a valid email address')
+    .normalizeEmail(),
+  
   body('password')
-    .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters long'),
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters long')
+    .matches(/\d/)
+    .withMessage('Password must contain at least one number'),
+  
   body('confirmPassword')
     .custom((value, { req }) => {
       if (value !== req.body.password) {
         throw new Error('Passwords do not match');
       }
       return true;
-    })
-], async (req, res) => {
-  // Check for validation errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.render('auth/register', {
-      title: 'Register - Hockey Roleplay Hub',
-      errors: errors.array(),
-      formData: req.body,
-      user: null
-    });
-  }
+    }),
   
-  try {
-    const db = getDb();
-    
-    // Hash password
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    
-    // Insert user into database
-    const result = db.prepare(`
-      INSERT INTO users (username, email, password)
-      VALUES (?, ?, ?)
-    `).run(req.body.username, req.body.email, hashedPassword);
-    
-    // Set session and redirect
-    req.session.user = {
-      id: result.lastInsertRowid,
-      username: req.body.username,
-      email: req.body.email
-    };
-    
-    res.redirect('/');
-  } catch (err) {
-    console.error(err);
-    res.status(500).render('error', {
-      title: 'Registration Error',
-      error: err,
-      user: null
-    });
-  }
-});
+  validateRequest
+], authController.register);
 
-// GET /auth/login - Show login form
-router.get('/login', (req, res) => {
-  if (req.session.user) {
-    return res.redirect('/');
-  }
-  
-  res.render('auth/login', {
-    title: 'Login - Hockey Roleplay Hub',
-    errors: [],
-    redirect: req.query.redirect || '/',
-    user: null
-  });
-});
-
-// POST /auth/login - Process login
+/**
+ * @route POST /api/auth/login
+ * @desc Login a user
+ * @access Public
+ */
 router.post('/login', [
-  // Validate input
-  body('username')
+  // Validation
+  body('email')
     .trim()
-    .notEmpty()
-    .withMessage('Username is required'),
+    .isEmail()
+    .withMessage('Please provide a valid email address')
+    .normalizeEmail(),
+  
   body('password')
     .notEmpty()
-    .withMessage('Password is required')
-], async (req, res) => {
-  // Check for validation errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.render('auth/login', {
-      title: 'Login - Hockey Roleplay Hub',
-      errors: errors.array(),
-      redirect: req.body.redirect || '/',
-      user: null
-    });
-  }
+    .withMessage('Password is required'),
   
-  try {
-    const db = getDb();
-    
-    // Find user by username
-    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(req.body.username);
-    
-    if (!user) {
-      return res.render('auth/login', {
-        title: 'Login - Hockey Roleplay Hub',
-        errors: [{ msg: 'Invalid username or password' }],
-        redirect: req.body.redirect || '/',
-        user: null
-      });
-    }
-    
-    // Check password
-    const passwordMatch = await bcrypt.compare(req.body.password, user.password);
-    
-    if (!passwordMatch) {
-      return res.render('auth/login', {
-        title: 'Login - Hockey Roleplay Hub',
-        errors: [{ msg: 'Invalid username or password' }],
-        redirect: req.body.redirect || '/',
-        user: null
-      });
-    }
-    
-    // Set session
-    req.session.user = {
-      id: user.id,
-      username: user.username,
-      email: user.email
-    };
-    
-    // Redirect to requested page or home
-    res.redirect(req.body.redirect || '/');
-  } catch (err) {
-    console.error(err);
-    res.status(500).render('error', {
-      title: 'Login Error',
-      error: err,
-      user: null
-    });
-  }
-});
+  validateRequest
+], authController.login);
 
-// GET /auth/logout - Log out user
-router.get('/logout', (req, res) => {
-  req.session.destroy(err => {
-    if (err) {
-      console.error('Error destroying session:', err);
-    }
-    res.redirect('/');
-  });
-});
+/**
+ * @route POST /api/auth/logout
+ * @desc Logout a user
+ * @access Public
+ */
+router.post('/logout', authController.logout);
+
+/**
+ * @route GET /api/auth/current-user
+ * @desc Get current logged in user
+ * @access Private
+ */
+router.get('/current-user', authenticate, authController.getCurrentUser);
+
+/**
+ * @route POST /api/auth/password-reset-request
+ * @desc Request password reset (send email)
+ * @access Public
+ */
+router.post('/password-reset-request', [
+  // Validation
+  body('email')
+    .trim()
+    .isEmail()
+    .withMessage('Please provide a valid email address')
+    .normalizeEmail(),
+  
+  validateRequest
+], authController.requestPasswordReset);
+
+/**
+ * @route POST /api/auth/password-reset
+ * @desc Reset password with token
+ * @access Public
+ */
+router.post('/password-reset', [
+  // Validation
+  body('token')
+    .notEmpty()
+    .withMessage('Token is required'),
+  
+  body('newPassword')
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters long')
+    .matches(/\d/)
+    .withMessage('Password must contain at least one number'),
+  
+  body('confirmPassword')
+    .custom((value, { req }) => {
+      if (value !== req.body.newPassword) {
+        throw new Error('Passwords do not match');
+      }
+      return true;
+    }),
+  
+  validateRequest
+], authController.resetPassword);
 
 module.exports = router;
